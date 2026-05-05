@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figma Leerlingkaart – MVI Klas 3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap');
+
+  :root {
+    --figma-purple: #7B61FF;
+    --figma-green: #1BC47D;
+    --c-basis: #1BC47D;
+    --c-kader: #0FA3FF;
+    --c-gltl:  #FF6B55;
+    --dark: #1A1A2E;
+    --text: #1A1A2E;
+    --muted: #6B6B8A;
+    --border: #E8E6FF;
+    --bg-card: #F7F6FF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: #EEEDF8;
+    color: var(--text);
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    margin: 0 auto;
+    padding: 13mm 13mm 9mm 13mm;
+    box-shadow: 0 8px 40px rgba(123,97,255,0.15);
+    border-radius: 4px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex; align-items: center; gap: 11px;
+    margin-bottom: 9px; padding-bottom: 9px;
+    border-bottom: 2.5px solid var(--figma-purple);
+  }
+  .header-icon {
+    width: 42px; height: 42px;
+    background: var(--figma-purple); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-icon svg { width: 24px; height: 24px; fill: white; }
+  .header-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px; font-weight: 800;
+    color: var(--dark); line-height: 1.1;
+  }
+  .header-text p { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* ── STUDENT INFO ── */
+  .student-info {
+    display: flex; gap: 8px; margin-bottom: 9px; align-items: flex-end;
+  }
+  .info-field {
+    flex: 1; display: flex; align-items: center; gap: 5px;
+    border-bottom: 1.5px solid #C4C0F0; padding-bottom: 2px;
+  }
+  .info-field label {
+    font-size: 8.5px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .05em; white-space: nowrap;
+  }
+  .info-field input {
+    flex: 1; border: none; outline: none;
+    font-family: inherit; font-size: 10px;
+    color: var(--dark); background: transparent;
+  }
+
+  /* ── NIVEAU KNOPPEN ── */
+  .niveau-kiezer { display: flex; align-items: center; gap: 4px; flex-shrink: 0; padding-bottom: 2px; }
+  .niveau-kiezer-label {
+    font-size: 8.5px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; margin-right: 2px;
+  }
+  .niv-btn {
+    padding: 2px 8px; border-radius: 5px; border: 1.5px solid transparent;
+    font-family: inherit; font-size: 9px; font-weight: 700;
+    cursor: pointer; transition: all .15s ease; line-height: 1.4;
+  }
+  .niv-btn.basis { background: #E0FAF0; color: #0C8050; border-color: #A8EDD0; }
+  .niv-btn.kader { background: #D8F0FF; color: #0A72B8; border-color: #90D4FF; }
+  .niv-btn.gltl  { background: #FFE8E5; color: #C13520; border-color: #FFB8B0; }
+  .niv-btn.active.basis { background: var(--c-basis); color: white; border-color: var(--c-basis); }
+  .niv-btn.active.kader { background: var(--c-kader); color: white; border-color: var(--c-kader); }
+  .niv-btn.active.gltl  { background: var(--c-gltl);  color: white; border-color: var(--c-gltl); }
+  .niveau-print-badge {
+    display: none; font-size: 9.5px; font-weight: 700;
+    padding: 2px 9px; border-radius: 5px; white-space: nowrap;
+  }
+  @media print {
+    .niveau-kiezer { display: none !important; }
+    .docent-kiezer { display: none !important; }
+    .niveau-print-badge { display: inline-block !important; }
+    .print-btn { display: none !important; }
+    .deel-wrap { display: none !important; }
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; margin: 0; width: 100%; }
+  }
+
+  /* ── DOCENT KNOPPEN ── */
+  .docent-kiezer { display: flex; align-items: center; gap: 4px; flex-shrink: 0; padding-bottom: 2px; }
+  .docent-kiezer-label {
+    font-size: 8.5px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; margin-right: 2px;
+  }
+  .doc-btn {
+    padding: 2px 8px; border-radius: 5px;
+    border: 1.5px solid #C4C0F0;
+    background: var(--bg-card); color: var(--muted);
+    font-family: inherit; font-size: 9px; font-weight: 700;
+    cursor: pointer; transition: all .15s ease; line-height: 1.4;
+  }
+  .doc-btn.active { background: var(--figma-purple); color: white; border-color: var(--figma-purple); }
+
+  /* ── DOEL BANNER ── */
+  .doel-banner {
+    background: linear-gradient(135deg, var(--figma-purple) 0%, #5B3FF8 100%);
+    color: white; border-radius: 8px;
+    padding: 7px 11px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .doel-banner .emoji { font-size: 17px; }
+  .doel-banner strong { display: block; font-size: 11px; font-weight: 700; }
+  .doel-banner span  { font-size: 9px; opacity: .85; }
+
+  /* ── LEGENDA ── */
+  .legenda {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 8px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 9px;
+  }
+  .leg-label {
+    font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .05em;
+    margin-right: 4px; white-space: nowrap;
+  }
+  .leg-item {
+    display: flex; align-items: center; gap: 4px;
+    font-weight: 600; padding: 2px 7px;
+    border-radius: 4px; white-space: nowrap;
+  }
+  .leg-item.basis { background: #E0FAF0; color: #0C8050; }
+  .leg-item.kader { background: #D8F0FF; color: #0A72B8; }
+  .leg-item.gltl  { background: #FFE8E5; color: #C13520; }
+  .leg-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+  .leg-sep { color: #C4C0F0; font-size: 11px; }
+  .leg-note { color: var(--muted); font-size: 8.5px; margin-left: 4px; }
+
+  /* ── NIVEAU BLOKJES per check-item ── */
+  .niv { display: flex; gap: 2px; flex-shrink: 0; margin-top: 2px; }
+  .niv-dot { width: 7px; height: 7px; border-radius: 2px; display: inline-block; }
+  .niv-dot.b   { background: var(--c-basis); }
+  .niv-dot.k   { background: var(--c-kader); }
+  .niv-dot.g   { background: var(--c-gltl); }
+  .niv-dot.off { background: #DDE0EC; }
+
+  /* ── PROGRESS ── */
+  .progress-section {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; padding: 6px 10px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border); border-radius: 7px;
+  }
+  .progress-label { font-size: 9px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .progress-bar-bg { flex: 1; height: 7px; background: #E8E6FF; border-radius: 4px; overflow: hidden; }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--figma-purple), var(--figma-green));
+    border-radius: 4px; transition: width .4s ease; width: 0%;
+  }
+  .progress-count { font-size: 9px; font-weight: 700; color: var(--figma-purple); min-width: 32px; text-align: right; }
+
+  /* ── DEEL KNOP ── */
+  .deel-wrap { display: flex; align-items: center; gap: 6px; }
+  .deel-btn {
+    padding: 4px 11px; border-radius: 5px; border: none;
+    background: var(--dark); color: white;
+    font-family: inherit; font-size: 9px; font-weight: 700;
+    cursor: pointer; transition: all .15s ease; white-space: nowrap;
+    opacity: 0.35; pointer-events: none;
+  }
+  .deel-btn.ready { opacity: 1; pointer-events: auto; }
+  .deel-btn.ready:hover { background: var(--figma-purple); }
+  .deel-feedback {
+    font-size: 8.5px; color: var(--figma-green); font-weight: 600;
+    opacity: 0; transition: opacity .3s; white-space: nowrap;
+  }
+  .deel-feedback.show { opacity: 1; }
+
+  /* ── SKILLS GRID ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px; margin-bottom: 7px;
+  }
+  .skill-card { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .skill-card.full { grid-column: 1 / -1; }
+  .skill-card.full .skill-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 14px;
+  }
+
+  .skill-header {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 8px;
+    background: var(--bg-card);
+    border-bottom: 1.5px solid var(--border);
+  }
+  .skill-number {
+    width: 21px; height: 21px;
+    background: var(--figma-purple); color: white;
+    border-radius: 5px; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .skill-title { font-size: 10px; font-weight: 700; color: var(--dark); line-height: 1.2; }
+  .skill-body { padding: 5px 8px; }
+
+  /* ── CHECKBOXES ── */
+  .check-item {
+    display: flex; align-items: flex-start; gap: 5px;
+    margin-bottom: 4px; cursor: pointer; user-select: none;
+  }
+  .check-item:last-child { margin-bottom: 0; }
+  .check-item input[type="checkbox"] { display: none; }
+
+  .check-box {
+    width: 13px; height: 13px;
+    border: 1.8px solid #C4C0F0; border-radius: 3px;
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s ease; background: white;
+  }
+  .check-item input:checked ~ .check-box {
+    background: var(--figma-green); border-color: var(--figma-green);
+  }
+  .check-item input:checked ~ .check-box::after {
+    content: '';
+    display: block; width: 7px; height: 4px;
+    border-left: 2px solid white; border-bottom: 2px solid white;
+    transform: rotate(-45deg) translate(0, -1px);
+  }
+  .check-label {
+    font-size: 9.5px; line-height: 1.4; color: var(--text);
+    flex: 1; display: flex; align-items: flex-start; gap: 5px;
+    transition: color .15s;
+  }
+  .check-item input:checked ~ .check-label {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: var(--figma-green);
+  }
+  .check-item input:checked ~ .check-label .niv-dot { opacity: .3; }
+
+  /* ── FOOTER BANNER ── */
+  .eindopdracht-banner {
+    background: linear-gradient(135deg, #1A1A2E 0%, #2D2D4A 100%);
+    color: white; border-radius: 8px;
+    padding: 7px 11px; margin-bottom: 7px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .eindopdracht-banner .emoji { font-size: 18px; }
+  .eindopdracht-banner strong { display: block; font-size: 10.5px; font-weight: 700; }
+  .eindopdracht-banner span  { font-size: 8.5px; opacity: .75; }
+
+  .footer {
+    text-align: center; font-size: 8px; color: #B0AECC;
+    padding-top: 5px; border-top: 1px solid var(--border);
+  }
+
+  .print-btn {
+    position: fixed; top: 20px; right: 20px;
+    background: var(--figma-purple); color: white;
+    border: none; border-radius: 8px;
+    padding: 10px 18px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(123,97,255,.4);
+    transition: all .2s; z-index: 100;
+  }
+  .print-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(123,97,255,.5); }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨️ Afdrukken</button>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="11" height="11" rx="3"/>
+        <rect x="4" y="17" width="11" height="11" rx="3" fill-opacity="0.55"/>
+        <rect x="17" y="4" width="11" height="11" rx="3" fill-opacity="0.8"/>
+        <circle cx="22.5" cy="22.5" r="5.5" fill-opacity="0.45"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>Figma — Leerlingkaart</h1>
+      <p>MVI Klas 3 · Profielmodule 4 IA · Leerpark Arnhem</p>
+    </div>
+  </div>
+
+  <!-- NAAM / KLAS / NIVEAU / DOCENT -->
+  <div class="student-info">
+    <div class="info-field">
+      <label>Naam</label>
+      <input type="text" id="inputNaam" placeholder="Jouw naam">
+    </div>
+    <div class="info-field">
+      <label>Klas</label>
+      <input type="text" id="inputKlas" placeholder="3-__">
+    </div>
+    <div class="niveau-kiezer">
+      <span class="niveau-kiezer-label">Niveau:</span>
+      <button class="niv-btn basis" onclick="setNiveau('basis')">Basis</button>
+      <button class="niv-btn kader" onclick="setNiveau('kader')">Kader</button>
+      <button class="niv-btn gltl"  onclick="setNiveau('gltl')">GL·TL</button>
+    </div>
+    <span class="niveau-print-badge" id="niveauBadge"></span>
+    <div class="docent-kiezer">
+      <span class="docent-kiezer-label">Docent:</span>
+      <button class="doc-btn" id="btn-visw" onclick="setDocent('VISW')">VISW</button>
+      <button class="doc-btn" id="btn-berm" onclick="setDocent('BERM')">BERM</button>
+    </div>
+  </div>
+
+  <!-- EINDDOEL -->
+  <div class="doel-banner">
+    <div class="emoji">🎯</div>
+    <div>
+      <strong>Einddoel: Maak een werkend klikbaar prototype van een website in Figma</strong>
+      <span>Bouw stap voor stap vaardigheden op — vink af wat je al beheerst!</span>
+    </div>
+  </div>
+
+  <!-- LEGENDA -->
+  <div class="legenda">
+    <span class="leg-label">Niveau:</span>
+    <div class="leg-item basis"><div class="leg-dot" style="background:var(--c-basis)"></div>Basis</div>
+    <span class="leg-sep">▸</span>
+    <div class="leg-item kader"><div class="leg-dot" style="background:var(--c-kader)"></div>Kader</div>
+    <span class="leg-sep">▸</span>
+    <div class="leg-item gltl"><div class="leg-dot" style="background:var(--c-gltl)"></div>GL · TL</div>
+    <span class="leg-note">— De drie blokjes achter elke vaardigheid tonen voor welk niveau die geldt. Een grijs blokje = niet van toepassing voor dat niveau.</span>
+  </div>
+
+  <!-- PROGRESS + DEEL -->
+  <div class="progress-section">
+    <span class="progress-label">Voortgang</span>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <span class="progress-count" id="progressCount">0 / 0</span>
+    <div class="deel-wrap">
+      <button class="deel-btn" id="deelBtn" onclick="deelVoortgang()">✉️ Deel voortgang</button>
+      <span class="deel-feedback" id="deelFeedback"></span>
+    </div>
+  </div>
+
+  <!-- SKILLS GRID -->
+  <div class="skills-grid">
+
+    <!-- SKILL 1 -->
+    <div class="skill-card">
+      <div class="skill-header">
+        <div class="skill-number">1</div>
+        <div class="skill-title">🖥️ Wat is Figma?</div>
+      </div>
+      <div class="skill-body">
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb een Figma-account aangemaakt met mijn schoolmail</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik weet wat Figma is en waarvoor je het gebruikt</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een nieuw bestand aanmaken en het scherm herkennen</span></label>
+      </div>
+    </div>
+
+    <!-- SKILL 2 -->
+    <div class="skill-card">
+      <div class="skill-header">
+        <div class="skill-number">2</div>
+        <div class="skill-title">📐 Frames &amp; Shapes</div>
+      </div>
+      <div class="skill-body">
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een Frame aanmaken voor desktop of mobiel</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan rechthoeken, cirkels, sterren en polygonen tekenen</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een grid en auto lay-out instellen</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb mijn eerste eenvoudige prototype gemaakt</span></label>
+      </div>
+    </div>
+
+    <!-- SKILL 3 -->
+    <div class="skill-card">
+      <div class="skill-header">
+        <div class="skill-number">3</div>
+        <div class="skill-title">✍️ Typografie</div>
+      </div>
+      <div class="skill-body">
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een tekstvak toevoegen en lettertype/grootte aanpassen</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan tekst op een pad plaatsen</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan tekst opvullen met een kleur of verloop</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan tekst combineren met vectoren</span></label>
+      </div>
+    </div>
+
+    <!-- SKILL 4 -->
+    <div class="skill-card">
+      <div class="skill-header">
+        <div class="skill-number">4</div>
+        <div class="skill-title">🖊️ Tekenen &amp; Effecten</div>
+      </div>
+      <div class="skill-body">
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan geometrisch tekenen met de basisgereedschappen</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb een eigen ontwerp gemaakt met shapes</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan werken met de pentool en ankerpunten aanpassen</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb een eigen icoon getekend met de pentool</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot off"></span><span class="niv-dot g"></span></span>Ik kan kwasten, effecten en de Shape builder gebruiken</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot off"></span><span class="niv-dot g"></span></span>Ik heb een logo ontworpen met vectoren en effecten</span></label>
+      </div>
+    </div>
+
+    <!-- SKILL 5 -->
+    <div class="skill-card">
+      <div class="skill-header">
+        <div class="skill-number">5</div>
+        <div class="skill-title">🎬 Animaties</div>
+      </div>
+      <div class="skill-body">
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een eenvoudige animatie maken tussen twee frames</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan Smart Animate toepassen</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een looping animatie (opstart) maken</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een hover / mouse-over animatie maken</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik begrijp wat componenten zijn en kan ze aanmaken</span></label>
+      </div>
+    </div>
+
+    <!-- SKILL 6 -->
+    <div class="skill-card">
+      <div class="skill-header">
+        <div class="skill-number">6</div>
+        <div class="skill-title">📱 App Prototype</div>
+      </div>
+      <div class="skill-body">
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb een scrollbare app-pagina gemaakt</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb een prototype met meerdere schermen (home + 3 pagina's)</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een interactieve knop component maken met varianten</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan een fotogallerij prototype bouwen met smart animate</span></label>
+      </div>
+    </div>
+
+    <!-- SKILL 7 – FULL WIDTH -->
+    <div class="skill-card full">
+      <div class="skill-header">
+        <div class="skill-number">7</div>
+        <div class="skill-title">🌐 Website Prototype — Eindopdracht</div>
+      </div>
+      <div class="skill-body">
+        <!-- rij 1: style guide        | prototype klikbaar -->
+        <!-- rij 2: design canvas      | exporteren         -->
+        <!-- rij 3: componenten        | publiceren         -->
+        <!-- rij 4: afbeeldingen       | advanced           -->
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb een Style Guide gemaakt (kleuren + typografie)</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Mijn website prototype is klikbaar en logisch navigeerbaar</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb een Design Canvas gemaakt met auto layouts</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik kan mijn ontwerp exporteren vanuit Figma</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb herbruikbare componenten aangemaakt</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot off"></span><span class="niv-dot g"></span></span>Ik kan mijn ontwerp publiceren als website</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot b"></span><span class="niv-dot k"></span><span class="niv-dot g"></span></span>Ik heb afbeeldingen toegevoegd en lagen netjes benoemd</span></label>
+        <label class="check-item"><input type="checkbox"><div class="check-box"></div>
+          <span class="check-label"><span class="niv"><span class="niv-dot off"></span><span class="niv-dot off"></span><span class="niv-dot g"></span></span>Ik heb advanced prototyping toegepast (variabelen, conditionele logica)</span></label>
+      </div>
+    </div>
+
+  </div><!-- /skills-grid -->
+
+  <!-- FOOTER BANNER -->
+  <div class="eindopdracht-banner">
+    <div class="emoji">🏁</div>
+    <div>
+      <strong>Klaar? Laat je prototype zien aan de docent en deel de Figma-link!</strong>
+      <span>Basis: alle groene blokjes ✔ &nbsp;·&nbsp; Kader: ook de blauwe blokjes ✔ &nbsp;·&nbsp; GL·TL: alle drie de kleuren ✔</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    Leerpark Arnhem MVI · Profielmodule 4 IA · Figma · 2025–2026 · sites.google.com/view/leerparkmvi
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  /* ── STATE ── */
+  let currentNiveau = null;
+  let currentDocent = null;
+
+  const niveauIncludes = { basis: [0], kader: [0,1], gltl: [0,1,2] };
+  const badgeStyle = {
+    basis: { text: 'Basis',   bg: '#1BC47D' },
+    kader: { text: 'Kader',   bg: '#0FA3FF' },
+    gltl:  { text: 'GL · TL', bg: '#FF6B55' }
+  };
+  const docentEmail = {
+    VISW: 'w.visser@arentheemcollege.nl',
+    BERM: 'm.berkhoff@arentheemcollege.nl'
+  };
+
+  /* ── HELPERS ── */
+  function itemCountsForNiveau(item, niveau) {
+    if (!niveau) return true;
+    const dots = item.querySelectorAll('.niv-dot');
+    return niveauIncludes[niveau].some(function(i) {
+      return dots[i] && !dots[i].classList.contains('off');
+    });
+  }
+
+  function updateProgress() {
+    var total = 0, done = 0;
+    document.querySelectorAll('.check-item').forEach(function(item) {
+      var cb = item.querySelector('input[type="checkbox"]');
+      if (!cb) return;
+      if (!itemCountsForNiveau(item, currentNiveau)) return;
+      total++;
+      if (cb.checked) done++;
+    });
+    var pct = total ? (done / total * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = done + ' / ' + total;
+  }
+
+  function updateDeelBtn() {
+    var btn = document.getElementById('deelBtn');
+    if (currentNiveau && currentDocent) {
+      btn.classList.add('ready');
+    } else {
+      btn.classList.remove('ready');
+    }
+  }
+
+  /* ── NIVEAU ── */
+  function setNiveau(niveau) {
+    currentNiveau = niveau;
+    document.querySelectorAll('.niv-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.classList.contains(niveau));
+    });
+    var s = badgeStyle[niveau];
+    var badge = document.getElementById('niveauBadge');
+    badge.textContent = s.text;
+    badge.style.background = s.bg;
+    badge.style.color = 'white';
+    badge.style.border = '1.5px solid ' + s.bg;
+    try { localStorage.setItem('figma-niveau', niveau); } catch(e) {}
+    updateDeelBtn();
+    updateProgress();
+  }
+
+  /* ── DOCENT ── */
+  function setDocent(docent) {
+    currentDocent = docent;
+    document.querySelectorAll('.doc-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.id === 'btn-' + docent.toLowerCase());
+    });
+    try { localStorage.setItem('figma-docent', docent); } catch(e) {}
+    updateDeelBtn();
+  }
+
+  /* ── DEEL VOORTGANG ── */
+  function buildURL() {
+    var naam = document.getElementById('inputNaam').value || '';
+    var klas = document.getElementById('inputKlas').value || '';
+    var vals = Array.from(document.querySelectorAll('input[type="checkbox"]'))
+                    .map(function(c) { return c.checked ? '1' : '0'; }).join('');
+    var base = window.location.href.split('?')[0];
+    return base
+      + '?naam='   + encodeURIComponent(naam)
+      + '&klas='   + encodeURIComponent(klas)
+      + '&niveau=' + (currentNiveau || '')
+      + '&docent=' + (currentDocent || '')
+      + '&v='      + vals;
+  }
+
+  function deelVoortgang() {
+    if (!currentNiveau || !currentDocent) return;
+    var naam = document.getElementById('inputNaam').value || 'Leerling';
+    var klas = document.getElementById('inputKlas').value || '';
+    var url  = buildURL();
+    var email = docentEmail[currentDocent];
+    var onderwerp = encodeURIComponent('Figma voortgang \u2013 ' + naam + ' ' + klas);
+    var body = encodeURIComponent(
+      'Hoi ' + currentDocent + ',\n\n' +
+      'Hier is mijn Figma-voortgangskaart:\n' + url + '\n\n' +
+      'Groet,\n' + naam
+    );
+    window.location.href = 'mailto:' + email + '?subject=' + onderwerp + '&body=' + body;
+    var fb = document.getElementById('deelFeedback');
+    fb.textContent = '📬 E-mail geopend!';
+    fb.classList.add('show');
+    setTimeout(function() { fb.classList.remove('show'); }, 3000);
+  }
+
+  /* ── RESTORE: localStorage eerst ── */
+  try {
+    var saved = JSON.parse(localStorage.getItem('figma-checklist') || '[]');
+    document.querySelectorAll('input[type="checkbox"]').forEach(function(cb, i) {
+      if (saved[i]) cb.checked = true;
+    });
+  } catch(e) {}
+
+  try {
+    var n = localStorage.getItem('figma-niveau');
+    if (n) setNiveau(n);
+  } catch(e) {}
+
+  try {
+    var d = localStorage.getItem('figma-docent');
+    if (d) setDocent(d);
+  } catch(e) {}
+
+  /* ── RESTORE: URL params overschrijven localStorage ── */
+  try {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('naam')) document.getElementById('inputNaam').value = params.get('naam');
+    if (params.get('klas')) document.getElementById('inputKlas').value = params.get('klas');
+    if (params.get('niveau')) setNiveau(params.get('niveau'));
+    if (params.get('docent')) setDocent(params.get('docent'));
+    if (params.get('v')) {
+      var bits = params.get('v').split('');
+      document.querySelectorAll('input[type="checkbox"]').forEach(function(cb, i) {
+        cb.checked = bits[i] === '1';
+      });
+    }
+  } catch(e) {}
+
+  /* ── EVENTS ── */
+  document.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      updateProgress();
+      try {
+        var vals = Array.from(document.querySelectorAll('input[type="checkbox"]')).map(function(c) { return c.checked; });
+        localStorage.setItem('figma-checklist', JSON.stringify(vals));
+      } catch(e) {}
+    });
+  });
+
+  updateProgress();
+</script>
+
+</body>
+</html>
