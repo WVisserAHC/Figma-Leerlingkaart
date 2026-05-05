@@ -296,11 +296,40 @@
     transition: all .2s; z-index: 100;
   }
   .print-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(123,97,255,.5); }
+  .blanco-btn {
+    right: 210px;
+    background: var(--muted);
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  }
+  .blanco-btn:hover { box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  @media print {
+    .is-blanco .niveau-kiezer  { display: none !important; }
+    .is-blanco .docent-kiezer  { display: none !important; }
+    .is-blanco .niveau-print-badge { display: none !important; }
+    .is-blanco .progress-section   { display: none !important; }
+    .is-blanco .niv-btn  { display: none !important; }
+    .is-blanco .doc-btn  { display: none !important; }
+    .is-blanco input[type="checkbox"]:checked ~ .check-box {
+      background: white !important;
+      border-color: #C4C0F0 !important;
+    }
+    .is-blanco input[type="checkbox"]:checked ~ .check-box::after {
+      display: none !important;
+    }
+    .is-blanco input[type="checkbox"]:checked ~ .check-label {
+      color: var(--text) !important;
+      text-decoration: none !important;
+    }
+    .is-blanco input[type="checkbox"]:checked ~ .check-label .niv-dot {
+      opacity: 1 !important;
+    }
+  }
 </style>
 </head>
 <body>
 
 <button class="print-btn" onclick="window.print()">🖨️ Afdrukken</button>
+<button class="print-btn blanco-btn" onclick="blancoPrint()">🖨️ Blanco afdrukken</button>
 
 <div class="page">
 
@@ -636,8 +665,9 @@
     var url  = buildURL();
     var email = docentEmail[currentDocent];
     var onderwerp = encodeURIComponent('Figma voortgang \u2013 ' + naam + ' ' + klas);
+    var aanhef = currentDocent === 'VISW' ? 'Beste meneer Visser' : 'Beste mevrouw Berkhoff';
     var body = encodeURIComponent(
-      'Hoi ' + currentDocent + ',\n\n' +
+      aanhef + ',\n\n' +
       'Hier is mijn Figma-voortgangskaart:\n' + url + '\n\n' +
       'Groet,\n' + naam
     );
@@ -693,6 +723,13 @@
   });
 
   updateProgress();
+
+  /* ── BLANCO AFDRUKKEN ── */
+  function blancoPrint() {
+    document.body.classList.add('is-blanco');
+    window.print();
+    document.body.classList.remove('is-blanco');
+  }
 </script>
 
 </body>
